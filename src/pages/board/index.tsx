@@ -63,7 +63,23 @@ export default function Board({ user, data }: BoardProps){
     .catch((err)=>{
       console.log("Erro ao cadastrar", err)
     })
-      
+  }
+
+  async function handleDelete(id: string){
+    
+    await firebase.firestore().collection("tarefas").doc(id)
+    .delete()
+    .then(()=>{
+      console.log("Deletado com sucesso")
+      let taskDeleted = taskList.filter(item=>{
+        return (item.id !== id)
+
+      })
+      setTaskList(taskDeleted)
+    })
+    .catch((err)=>{
+      console.log(err)
+    })
 
   }
 
@@ -93,7 +109,7 @@ export default function Board({ user, data }: BoardProps){
           <section>
 
             {taskList.map(task => (
-              <article className={styles.taskList}>
+              <article key={task.id} className={styles.taskList}>
 
               <Link href={`/board/${task.id}`}>
               <p>{task.tarefa}</p>
@@ -111,7 +127,7 @@ export default function Board({ user, data }: BoardProps){
                 </button>
                 </div>
     
-                <button>
+                <button onClick={()=> handleDelete(task.id)}>
                   <FiTrash size={20} color='#ff3636'/>
                   <span>Excluir</span>
                 </button>
