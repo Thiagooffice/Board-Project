@@ -8,7 +8,7 @@ import Link from 'next/link'
  
 
 import Head from 'next/head'
-import {FiPlus, FiCalendar, FiEdit2, FiTrash, FiClock} from 'react-icons/fi'
+import {FiPlus, FiCalendar, FiEdit2, FiTrash, FiClock, FiX} from 'react-icons/fi'
 import { SupportButton } from '../../components/SuporteButton'
 
 type TaskList={
@@ -31,12 +31,34 @@ export default function Board({ user, data }: BoardProps){
 
   const [input, setInput] = useState("")
   const [taskList, setTaskList] = useState<TaskList[]>(JSON.parse(data))
+  
+  const [taskEdit, setTaskEdit]=useState<TaskList | null>(null)
 
   async function handleAddTask(e: FormEvent){
     e.preventDefault()
 
     if(input === ""){
       alert("Preencha alguma tarefa!")
+      return
+    }
+
+    if(taskEdit){
+      await firebase.firestore().collection("tarefas")
+      .doc(taskEdit.id)
+      .update({
+        tarefa: input
+      })
+      .then(()=>{
+        let data = taskList
+        let taskIndex = taskList.findIndex(item => item.id === taskEdit.id);
+        data[taskIndex].tarefa = input
+
+        setTaskList(data)
+        setTaskEdit(null)
+        setInput("")
+
+
+      })
       return
     }
 
@@ -83,6 +105,16 @@ export default function Board({ user, data }: BoardProps){
 
   }
 
+  function handleEditTask(task: TaskList){
+    setTaskEdit(task)
+    setInput(task.tarefa)
+  }
+
+  function handleCancelEdit(){
+    setInput("")
+    setTaskEdit(null)
+  }
+
     return(
         <>
         <Head>
@@ -90,6 +122,15 @@ export default function Board({ user, data }: BoardProps){
         </Head>
         
         <main className={styles.container}>
+
+          {taskEdit && (
+            <span className={styles.warnText}>
+              <button onClick={handleCancelEdit}>
+              <FiX size={30} color="#ff3636" />
+              </button>
+              Você esta editando uma tarefa!
+            </span>
+          )}
           
           <form onSubmit={handleAddTask}>
             <input 
@@ -122,7 +163,7 @@ export default function Board({ user, data }: BoardProps){
               <time>{task.createdFormated}</time>
                   </div>
                 <button>
-                  <FiEdit2 size={20} color='#fff'/>
+                  <FiEdit2 onClick={ ()=> handleEditTask(task)} size={20} color='#fff'/>
                   <span>Editar</span>
                 </button>
                 </div>
