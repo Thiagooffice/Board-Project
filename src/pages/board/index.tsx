@@ -162,8 +162,8 @@ export default function Board({ user, data }: BoardProps){
               <FiCalendar size={20} color='#ffb800'/>
               <time>{task.createdFormated}</time>
                   </div>
-                <button>
-                  <FiEdit2 onClick={ ()=> handleEditTask(task)} size={20} color='#fff'/>
+                <button onClick={ ()=> handleEditTask(task)}>
+                  <FiEdit2  size={20} color='#fff'/>
                   <span>Editar</span>
                 </button>
                 </div>
