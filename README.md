@@ -1,7 +1,7 @@
 # Projeto Board
 
 <p style="text-align:center">
-    <img width="350" src="./public/images/semLogin.jpg"/>
+    <img width="500" src="./public/images/semLogin.jpg"/>
 </p>
 
 ### Uma ferramenta para seu dia a dia Escreva, planeje e organize-se..
